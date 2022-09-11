@@ -241,10 +241,14 @@ def create_app(test_config=None):
         previous_questions = body.get("previous_questions", None)
         quiz_category = body.get("quiz_category", None)
 
-        try: 
-            selection = Question.query.filter(~Question.id.in_(previous_questions), Question.category == quiz_category["id"]).all()
-            questions = [question.format() for question in selection]
+        try:
+            if quiz_category['id'] == 0:
+                selection = Question.query.filter(~Question.id.in_(previous_questions)).all()
+                
+            else: 
+                selection = Question.query.filter(~Question.id.in_(previous_questions), Question.category == quiz_category["id"]).all()
             
+            questions = [question.format() for question in selection]
             random_question = random.choice(questions)
             
             return jsonify({
